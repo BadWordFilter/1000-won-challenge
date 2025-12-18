@@ -698,7 +698,7 @@ function copyResult() {
         acts = resultData.activity;
     }
 
-    const text = `[천원 챌린지 유형 테스트]\n${state.major} ${state.username}님의 유형은?\n\n✨ ${resultUI.title.textContent}\n\n${resultUI.desc.innerText}\n\n[추천 챌린지]\n${acts}\n\n하지만 가장 중요한 건, 여러분이 진짜 하고 싶은 걸 선택하는 거예요! ✨`;
+    const text = `[천원 챌린지 유형 테스트]\n${state.major} ${state.username}님의 유형은?\n\n✨ ${resultUI.title.textContent}\n\n${resultUI.desc.innerText}\n\n[추천 챌린지]\n${acts}\n\n하지만 가장 중요한 건, 여러분이 진짜 하고 싶은 걸 선택하는 거예요! ✨\n\n👇 당신도 지금 도전해보세요!\nhttps://badwordfilter.github.io/1000-won-challenge/`;
     navigator.clipboard.writeText(text).then(() => {
         showToast('결과가 클립보드에 복사되었습니다! 📋');
     });
