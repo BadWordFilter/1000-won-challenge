@@ -75,11 +75,11 @@ const QUESTIONS = [
         id: 1,
         question: "1000원이 생겼다. 가장 먼저 떠오르는 사용 방식은?",
         options: [
-            { text: "뭔가 만들어볼 재료를 사본다", type: "MAKER" },
-            { text: "가볍게 근처 어디라도 떠나본다", type: "EXPLORER" },
-            { text: "일단 아껴둔다", type: "SAVER" },
-            { text: "특별한 순간을 기록할 소품을 산다", type: "OBSERVER" },
-            { text: "되팔기 좋은 물건을 찾아본다", type: "TRADER" }
+            { text: "뭔가 만들어볼 재료를 사본다", effects: [{ type: "MAKER", val: 2 }, { type: "SAVER", val: -1 }] },
+            { text: "가볍게 근처 어디라도 떠나본다", effects: [{ type: "EXPLORER", val: 2 }, { type: "OBSERVER", val: -1 }] },
+            { text: "일단 아껴둔다", effects: [{ type: "SAVER", val: 2 }, { type: "MAKER", val: -1 }] },
+            { text: "특별한 순간을 기록할 소품을 산다", effects: [{ type: "OBSERVER", val: 2 }, { type: "EXPLORER", val: -1 }] },
+            { text: "되팔기 좋은 물건을 찾아본다", effects: [{ type: "TRADER", val: 2 }, { type: "SAVER", val: -1 }] }
         ]
     },
     {
@@ -425,9 +425,16 @@ const pages = {
 
 const statusBar = document.getElementById('status-bar');
 const lvlVal = document.getElementById('lvl-val');
-const expFill = document.getElementById('exp-fill');
 const goldVal = document.getElementById('gold-val');
 const mainHeader = document.getElementById('main-header');
+
+const classGauges = {
+    MAKER: document.getElementById('gauge-MAKER'),
+    EXPLORER: document.getElementById('gauge-EXPLORER'),
+    SAVER: document.getElementById('gauge-SAVER'),
+    OBSERVER: document.getElementById('gauge-OBSERVER'),
+    TRADER: document.getElementById('gauge-TRADER')
+};
 
 const inputs = {
     username: document.getElementById('username'),
@@ -536,8 +543,11 @@ function renderQuestion() {
     // 1. HUD Updates
     lvlVal.textContent = (state.currentQuestionIndex + 1).toString().padStart(2, '0');
 
-    const expPercent = ((state.currentQuestionIndex + 1) / state.testSequence.length) * 100;
-    expFill.style.width = `${expPercent}%`;
+    const MAX_SCORE = 7; // Gauge max
+    Object.keys(state.scores).forEach(key => {
+        const percent = Math.min(100, (state.scores[key] / MAX_SCORE) * 100);
+        if (classGauges[key]) classGauges[key].style.width = `${percent}%`;
+    });
 
     // Gold Countdown Anim
     const targetGold = Math.max(0, 1000 - Math.floor((state.currentQuestionIndex / state.testSequence.length) * 1000));
@@ -601,6 +611,8 @@ function handleAnswer(effects) {
     effects.forEach(effect => {
         if (state.scores.hasOwnProperty(effect.type)) {
             state.scores[effect.type] += effect.val;
+            // Floor at 0
+            if (state.scores[effect.type] < 0) state.scores[effect.type] = 0;
         }
     });
 

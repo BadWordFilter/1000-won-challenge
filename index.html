@@ -35,19 +35,48 @@
     <div class="app-container">
         <!-- GAME STATUS BAR -->
         <div class="game-status-bar hidden" id="status-bar">
-            <div class="stat-item">
-                <span class="label">LVL</span>
-                <span class="value" id="lvl-val">01</span>
-            </div>
-            <div class="stat-item exp">
-                <span class="label">EXP</span>
-                <div class="exp-gauge">
-                    <div class="exp-fill" id="exp-fill"></div>
+            <div class="stat-sidebar">
+                <div class="mini-stat">
+                    <span class="label">LVL</span>
+                    <span class="value" id="lvl-val">01</span>
+                </div>
+                <div class="mini-stat">
+                    <span class="label">GOLD</span>
+                    <span class="value" id="gold-val">1,000₩</span>
                 </div>
             </div>
-            <div class="stat-item">
-                <span class="label">GOLD</span>
-                <span class="value" id="gold-val">1,000₩</span>
+
+            <div class="class-gauges">
+                <div class="gauge-item" data-class="MAKER">
+                    <span class="gauge-label">MKR</span>
+                    <div class="gauge-bar">
+                        <div class="gauge-fill" id="gauge-MAKER"></div>
+                    </div>
+                </div>
+                <div class="gauge-item" data-class="EXPLORER">
+                    <span class="gauge-label">EXP</span>
+                    <div class="gauge-bar">
+                        <div class="gauge-fill" id="gauge-EXPLORER"></div>
+                    </div>
+                </div>
+                <div class="gauge-item" data-class="SAVER">
+                    <span class="gauge-label">SVR</span>
+                    <div class="gauge-bar">
+                        <div class="gauge-fill" id="gauge-SAVER"></div>
+                    </div>
+                </div>
+                <div class="gauge-item" data-class="OBSERVER">
+                    <span class="gauge-label">OBS</span>
+                    <div class="gauge-bar">
+                        <div class="gauge-fill" id="gauge-OBSERVER"></div>
+                    </div>
+                </div>
+                <div class="gauge-item" data-class="TRADER">
+                    <span class="gauge-label">TRD</span>
+                    <div class="gauge-bar">
+                        <div class="gauge-fill" id="gauge-TRADER"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
