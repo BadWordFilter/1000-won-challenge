@@ -131,10 +131,22 @@ body::after {
     color: var(--text-muted);
 }
 
-.stat-item .value {
+.stat-item .value,
+.mini-stat .value {
     font-size: 1.1rem;
-    color: var(--primary);
-    text-shadow: 0 0 8px var(--primary-glow);
+    font-family: var(--font-game);
+}
+
+#lvl-val {
+    color: #4ade80;
+    /* Neon Green */
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+#gold-val {
+    color: #facc15;
+    /* Bright Gold */
+    text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
 }
 
 .stat-sidebar {
