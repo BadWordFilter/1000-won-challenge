@@ -237,10 +237,15 @@ body::after {
     text-align: center;
 }
 
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
 .input-group label {
     font-family: var(--font-game);
     color: var(--primary);
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     display: block;
 }
 
@@ -258,6 +263,10 @@ input[type="text"] {
 input[type="text"]:focus {
     border-color: var(--primary);
     box-shadow: 0 0 10px var(--primary-glow);
+}
+
+#start-btn {
+    margin-top: 32px;
 }
 
 /* Question Section */
@@ -284,7 +293,8 @@ input[type="text"]:focus {
 .options-container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+    margin-top: 20px;
 }
 
 .option-btn {
@@ -387,7 +397,14 @@ input[type="text"]:focus {
 .text-btn {
     background: transparent;
     color: var(--text-muted);
-    margin-top: 12px;
+    margin-top: 20px;
+}
+
+.action-buttons {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 /* Event Mode */
