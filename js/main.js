@@ -658,17 +658,17 @@ function showResult() {
     // Render List of Activities
     let activitiesHtml = "";
     if (Array.isArray(resultData.activities)) {
-        activitiesHtml = `<ul style="text-align: left; padding-left: 20px; margin-top: 10px;">
-            ${resultData.activities.map(act => `<li style="margin-bottom: 8px;">${act}</li>`).join('')}
+        activitiesHtml = `<ul>
+            ${resultData.activities.map(act => `<li>${act}</li>`).join('')}
         </ul>`;
     } else {
         activitiesHtml = resultData.activity; // Fallback
     }
 
-    // Add Encouraging Message to separate element
+    // Add Encouraging Message
     const msgElement = document.getElementById('encouraging-msg');
     if (msgElement) {
-        msgElement.innerHTML = `하지만 가장 중요한 건,<br>여러분이 진짜 하고 싶은 걸 선택하는 거예요! ✨`;
+        msgElement.innerHTML = `가장 중요한 건,<br>여러분이 진짜 하고 싶은 걸 선택하는 거예요! ✨`;
     }
 
     resultUI.activity.innerHTML = activitiesHtml;
