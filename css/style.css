@@ -184,7 +184,45 @@ body::after {
 .gauge-fill {
     height: 100%;
     width: 0%;
-    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Stat Change Animations */
+.gauge-bar.update-up {
+    animation: stat-up-flash 0.4s ease-out;
+}
+
+.gauge-bar.update-down {
+    animation: stat-down-shake 0.3s ease-in-out;
+}
+
+@keyframes stat-up-flash {
+    0% {
+        border-color: #fff;
+        box-shadow: 0 0 15px #fff;
+    }
+
+    100% {
+        border-color: #3f3f46;
+        box-shadow: none;
+    }
+}
+
+@keyframes stat-down-shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+        border-color: #ef4444;
+    }
+
+    25% {
+        transform: translateX(-3px);
+    }
+
+    75% {
+        transform: translateX(3px);
+    }
 }
 
 /* Individual Gauge Colors */

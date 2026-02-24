@@ -610,9 +610,16 @@ function renderQuestion() {
 function handleAnswer(effects) {
     effects.forEach(effect => {
         if (state.scores.hasOwnProperty(effect.type)) {
+            const oldValue = state.scores[effect.type];
             state.scores[effect.type] += effect.val;
-            // Floor at 0
             if (state.scores[effect.type] < 0) state.scores[effect.type] = 0;
+
+            // Trigger Visual Feedback
+            if (state.scores[effect.type] > oldValue) {
+                triggerStatAnim(effect.type, 'update-up');
+            } else if (state.scores[effect.type] < oldValue) {
+                triggerStatAnim(effect.type, 'update-down');
+            }
         }
     });
 
@@ -623,6 +630,23 @@ function handleAnswer(effects) {
         document.body.classList.remove('event-mode');
         showResult();
     }
+}
+
+function triggerStatAnim(type, className) {
+    const gauge = classGauges[type];
+    if (!gauge) return;
+
+    // Target the parent gauge-bar
+    const bar = gauge.closest('.gauge-bar');
+    if (!bar) return;
+
+    bar.classList.remove('update-up', 'update-down');
+    void bar.offsetWidth; // Trigger reflow
+    bar.classList.add(className);
+
+    setTimeout(() => {
+        bar.classList.remove(className);
+    }, 600);
 }
 
 function animateNumber(element, start, end, duration = 500) {
