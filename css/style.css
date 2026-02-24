@@ -137,12 +137,12 @@ body::after {
     text-shadow: 0 0 8px var(--primary-glow);
 }
 
-.stat-item.health {
+.stat-item.exp {
     flex: 1;
     margin: 0 24px;
 }
 
-.hp-gauge {
+.exp-gauge {
     height: 12px;
     background: #3f3f46;
     border: 2px solid #000;
@@ -151,12 +151,28 @@ body::after {
     overflow: hidden;
 }
 
-.hp-fill {
+.exp-fill {
     height: 100%;
-    background: var(--primary);
-    width: 100%;
+    background: #3b82f6;
+    /* EXP Blue */
+    width: 0%;
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Sprite Visuals */
+.sprite-container {
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+}
+
+.sprite-container span {
+    display: inline-block;
 }
 
 /* Header / Title Hiding */
@@ -278,7 +294,7 @@ input[type="text"]:focus {
     font-family: var(--font-game);
     font-size: 1.25rem;
     color: var(--primary);
-    margin-bottom: 8px;
+    margin-bottom: 24px;
 }
 
 #question-text {

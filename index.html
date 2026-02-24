@@ -39,15 +39,15 @@
                 <span class="label">LVL</span>
                 <span class="value" id="lvl-val">01</span>
             </div>
-            <div class="stat-item health">
-                <span class="label">HP</span>
-                <div class="hp-gauge">
-                    <div class="hp-fill" id="hp-fill"></div>
+            <div class="stat-item exp">
+                <span class="label">EXP</span>
+                <div class="exp-gauge">
+                    <div class="exp-fill" id="exp-fill"></div>
                 </div>
             </div>
             <div class="stat-item">
                 <span class="label">GOLD</span>
-                <span class="value">1,000₩</span>
+                <span class="value" id="gold-val">1,000₩</span>
             </div>
         </div>
 
@@ -81,7 +81,8 @@
                 <div class="progress-fill" id="progress-fill"></div>
             </div>
             <div class="card glass-card">
-                <div class="question-number">Q<span id="q-num">1</span></div>
+                <div id="quest-sprite-box" class="sprite-container"></div>
+                <div class="question-number">QUEST <span id="q-num">1</span></div>
                 <h3 id="question-text">질문 내용이 여기에 나옵니다.</h3>
                 <div class="options-container" id="options-container">
                     <!-- Options injected via JS -->

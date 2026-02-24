@@ -411,7 +411,8 @@ const state = {
         SAVER: 0,
         OBSERVER: 0,
         TRADER: 0
-    }
+    },
+    gold: 1000
 };
 
 // DOM Elements
@@ -423,7 +424,8 @@ const pages = {
 
 const statusBar = document.getElementById('status-bar');
 const lvlVal = document.getElementById('lvl-val');
-const hpFill = document.getElementById('hp-fill');
+const expFill = document.getElementById('exp-fill');
+const goldVal = document.getElementById('gold-val');
 const mainHeader = document.getElementById('main-header');
 
 const inputs = {
@@ -434,7 +436,8 @@ const inputs = {
 const questionUI = {
     text: document.getElementById('question-text'),
     header: document.querySelector('.question-number'),
-    container: document.getElementById('options-container')
+    container: document.getElementById('options-container'),
+    spriteBox: document.getElementById('quest-sprite-box')
 };
 
 const resultUI = {
@@ -517,6 +520,7 @@ function startTest() {
     state.username = name;
     state.major = major;
     state.currentQuestionIndex = 0;
+    state.gold = 1000;
     Object.keys(state.scores).forEach(key => state.scores[key] = 0);
     state.testSequence = generateTestSequence();
     renderQuestion();
@@ -527,10 +531,35 @@ function renderQuestion() {
     const item = state.testSequence[state.currentQuestionIndex];
     const isEvent = item.id.toString().startsWith('E');
 
+    // 1. HUD Updates
     lvlVal.textContent = (state.currentQuestionIndex + 1).toString().padStart(2, '0');
-    const hpPercent = ((state.currentQuestionIndex + 1) / state.testSequence.length) * 100;
-    hpFill.style.width = `${hpPercent}%`;
 
+    const expPercent = ((state.currentQuestionIndex + 1) / state.testSequence.length) * 100;
+    expFill.style.width = `${expPercent}%`;
+
+    // Gold Countdown: 1000 down to 0
+    state.gold = Math.max(0, 1000 - Math.floor((state.currentQuestionIndex / state.testSequence.length) * 1000));
+    goldVal.textContent = `${state.gold.toLocaleString()}₩`;
+
+    // 2. Sprite Icon Rendering
+    const typeIcons = {
+        MAKER: '🛠️',
+        EXPLORER: '🚶',
+        SAVER: '💰',
+        OBSERVER: '📸',
+        TRADER: '🤝',
+        EVENT: '✨'
+    };
+
+    let currentIcon = '❓';
+    if (isEvent) {
+        currentIcon = typeIcons.EVENT;
+    } else if (item.options[0].type) {
+        currentIcon = typeIcons[item.options[0].type] || '❓';
+    }
+    questionUI.spriteBox.innerHTML = `<span>${currentIcon}</span>`;
+
+    // 3. Narrative Title
     if (isEvent) {
         document.body.classList.add('event-mode');
         const typeMatch = item.id.match(/^E_([A-Z]+)_\d+/);
