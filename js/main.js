@@ -412,7 +412,8 @@ const state = {
         OBSERVER: 0,
         TRADER: 0
     },
-    gold: 1000
+    gold: 1000,
+    previousGold: 1000
 };
 
 // DOM Elements
@@ -521,6 +522,7 @@ function startTest() {
     state.major = major;
     state.currentQuestionIndex = 0;
     state.gold = 1000;
+    state.previousGold = 1000;
     Object.keys(state.scores).forEach(key => state.scores[key] = 0);
     state.testSequence = generateTestSequence();
     renderQuestion();
@@ -537,9 +539,11 @@ function renderQuestion() {
     const expPercent = ((state.currentQuestionIndex + 1) / state.testSequence.length) * 100;
     expFill.style.width = `${expPercent}%`;
 
-    // Gold Countdown: 1000 down to 0
-    state.gold = Math.max(0, 1000 - Math.floor((state.currentQuestionIndex / state.testSequence.length) * 1000));
-    goldVal.textContent = `${state.gold.toLocaleString()}₩`;
+    // Gold Countdown Anim
+    const targetGold = Math.max(0, 1000 - Math.floor((state.currentQuestionIndex / state.testSequence.length) * 1000));
+    animateNumber(goldVal, state.previousGold, targetGold, 600);
+    state.previousGold = targetGold;
+    state.gold = targetGold;
 
     // 2. Sprite Icon Rendering
     const typeIcons = {
@@ -607,6 +611,20 @@ function handleAnswer(effects) {
         document.body.classList.remove('event-mode');
         showResult();
     }
+}
+
+function animateNumber(element, start, end, duration = 500) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const current = Math.floor(progress * (end - start) + start);
+        element.textContent = `${current.toLocaleString()}₩`;
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
 }
 
 function getResultType() {
