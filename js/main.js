@@ -421,6 +421,11 @@ const pages = {
     result: document.getElementById('result-page')
 };
 
+const statusBar = document.getElementById('status-bar');
+const lvlVal = document.getElementById('lvl-val');
+const hpFill = document.getElementById('hp-fill');
+const mainHeader = document.getElementById('main-header');
+
 const inputs = {
     username: document.getElementById('username'),
     major: document.getElementById('major')
@@ -428,10 +433,8 @@ const inputs = {
 
 const questionUI = {
     text: document.getElementById('question-text'),
-    num: document.getElementById('q-num'), // Keeping for legacy if needed, but we will use header
-    header: document.querySelector('.question-number'), // NEW: Target the parent to control "Q" prefix
-    container: document.getElementById('options-container'),
-    progress: document.getElementById('progress-fill')
+    header: document.querySelector('.question-number'),
+    container: document.getElementById('options-container')
 };
 
 const resultUI = {
@@ -439,21 +442,21 @@ const resultUI = {
     title: document.getElementById('result-title'),
     badge: document.querySelector('.badge-icon'),
     desc: document.getElementById('result-desc'),
-    activity: document.getElementById('result-activity'),
-    captureArea: document.getElementById('result-capture-area')
+    activity: document.getElementById('result-activity')
 };
 
 // Functions
 function showPage(pageId) {
-    console.log(`Switching to page: ${pageId}`);
+    console.log(`Switching to stage: ${pageId}`);
 
-    const pages = {
-        intro: document.getElementById('intro-page'),
-        question: document.getElementById('question-page'),
-        result: document.getElementById('result-page')
-    };
+    if (pageId === 'question') {
+        statusBar.classList.remove('hidden');
+        mainHeader.classList.add('hidden');
+    } else {
+        statusBar.classList.add('hidden');
+        mainHeader.classList.remove('hidden');
+    }
 
-    // 1. Hide ALL pages first
     Object.values(pages).forEach(page => {
         if (page) {
             page.classList.remove('active');
@@ -461,59 +464,37 @@ function showPage(pageId) {
         }
     });
 
-    // 2. Unhide and activate the target page
     const target = pages[pageId];
     if (target) {
         target.classList.remove('hidden');
-        // Small delay to allow display:block before adding 'active' for transition
         setTimeout(() => {
             target.classList.add('active');
-            console.log(`${pageId} should now be active.`);
         }, 50);
-    } else {
-        console.error(`Page element with ID '${pageId}-page' not found!`);
     }
 }
 
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;
-    // While there remain elements to shuffle.
     while (currentIndex != 0) {
-        // Pick a remaining element.
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex], array[currentIndex]];
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
     return array;
 }
 
 function generateTestSequence() {
-    // 1. Get 1 random event from each category
     const categories = ['MAKER', 'EXPLORER', 'SAVER', 'OBSERVER', 'TRADER'];
     const selectedEvents = [];
-
     categories.forEach(cat => {
-        // Find all events for this category (id starts with E_CATEGORY)
         const catEvents = EVENT_POOL.filter(e => e.id.startsWith(`E_${cat}`));
-        // Pick one random
         if (catEvents.length > 0) {
-            const randomEvent = catEvents[Math.floor(Math.random() * catEvents.length)];
-            selectedEvents.push(randomEvent);
+            selectedEvents.push(catEvents[Math.floor(Math.random() * catEvents.length)]);
         }
     });
 
-    // 2. Shuffle the 5 selected events
     const shuffledEvents = shuffle(selectedEvents);
-
-    // 3. Mix with QUESTIONS
-    // Insert them at fixed positions to intersperse
-    // Q1, Q2, E1, Q3, E2, Q4, E3, Q5, E4, Q6, E5, Q7, Q8.
     const sequence = [...QUESTIONS];
-
-    // Insert events (reverse order to keep indices stable)
-    // Indexes: 2, 3, 4, 5, 6
     if (shuffledEvents.length >= 5) {
         sequence.splice(6, 0, shuffledEvents[4]);
         sequence.splice(5, 0, shuffledEvents[3]);
@@ -521,111 +502,69 @@ function generateTestSequence() {
         sequence.splice(3, 0, shuffledEvents[1]);
         sequence.splice(2, 0, shuffledEvents[0]);
     }
-
     return sequence;
 }
 
 function startTest() {
-    console.log('Starting test...');
-    try {
-        const nameInput = document.getElementById('username');
-        const majorInput = document.getElementById('major');
+    const name = inputs.username.value.trim();
+    const major = inputs.major.value.trim();
 
-        if (!nameInput || !majorInput) {
-            console.error('Input elements not found!');
-            showToast('오류: 입력창을 찾을 수 없습니다.');
-            return;
-        }
-
-        const name = nameInput.value.trim();
-        const major = majorInput.value.trim();
-
-        if (!name || !major) {
-            showToast('이름과 학과를 모두 입력해주세요! ✍️');
-            return;
-        }
-
-        state.username = name;
-        state.major = major;
-        state.currentQuestionIndex = 0;
-        // Reset scores
-        Object.keys(state.scores).forEach(key => state.scores[key] = 0);
-
-        // Generate new sequence
-        state.testSequence = generateTestSequence();
-
-        if (!state.testSequence || state.testSequence.length === 0) {
-            throw new Error('Test sequence generation failed');
-        }
-
-        renderQuestion();
-        showPage('question');
-    } catch (e) {
-        console.error('Error starting test:', e);
-        showToast('테스트 시작 중 오류가 발생했습니다. 다시 시도해주세요.');
+    if (!name || !major) {
+        showToast('이름과 학과를 모두 입력해주세요! ✍️');
+        return;
     }
+
+    state.username = name;
+    state.major = major;
+    state.currentQuestionIndex = 0;
+    Object.keys(state.scores).forEach(key => state.scores[key] = 0);
+    state.testSequence = generateTestSequence();
+    renderQuestion();
+    showPage('question');
 }
 
 function renderQuestion() {
     const item = state.testSequence[state.currentQuestionIndex];
     const isEvent = item.id.toString().startsWith('E');
 
-    // UI Updates for Event Mode
+    lvlVal.textContent = (state.currentQuestionIndex + 1).toString().padStart(2, '0');
+    const hpPercent = ((state.currentQuestionIndex + 1) / state.testSequence.length) * 100;
+    hpFill.style.width = `${hpPercent}%`;
+
     if (isEvent) {
         document.body.classList.add('event-mode');
-        // Extract type from ID (E_MAKER_1 -> MAKER)
         const typeMatch = item.id.match(/^E_([A-Z]+)_\d+/);
         const eventType = typeMatch ? typeMatch[1] : 'UNKNOWN';
-
-        // ✨ Dynamic Title from EVENT_TITLES
-        const titleText = EVENT_TITLES[eventType] || "✨ EVENT STAGE ✨";
-        // REPLACE entire header content to avoid "Q" overlapping
+        const titleText = EVENT_TITLES[eventType] || "✨ ENCOUNTER ✨";
         questionUI.header.innerHTML = `<span class="event-badge">${titleText}</span>`;
-        questionUI.text.style.fontWeight = 'bold';
     } else {
         document.body.classList.remove('event-mode');
-        // Restore standard Q format
-        questionUI.header.innerHTML = `Q<span id="q-num">${state.currentQuestionIndex + 1}</span>`;
-        questionUI.text.style.fontWeight = 'normal';
+        questionUI.header.innerHTML = `QUEST ${state.currentQuestionIndex + 1}`;
     }
 
     questionUI.text.textContent = item.question;
-
-    // Clear previous options
     questionUI.container.innerHTML = '';
 
-    // Create buttons
     item.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         if (isEvent) btn.classList.add('event-option');
+        btn.textContent = `> ${opt.text}`;
 
-        btn.textContent = opt.text;
-
-        // Handle click
         btn.onclick = () => {
-            // Check if it's a standard question (legacy type field) or event (effects array)
             if (opt.type) {
-                // Standard Question: Simple +1
                 handleAnswer([{ type: opt.type, val: 1 }]);
             } else if (opt.effects) {
-                // Event: Complex effects
                 handleAnswer(opt.effects);
             } else {
-                // Fallback (e.g. no effect)
                 handleAnswer([]);
             }
         };
         questionUI.container.appendChild(btn);
     });
-
-    // Update progress
-    const progress = ((state.currentQuestionIndex + 1) / state.testSequence.length) * 100;
-    questionUI.progress.style.width = `${progress}%`;
 }
 
 function handleAnswer(effects) {
-    // Apply effects
     effects.forEach(effect => {
         if (state.scores.hasOwnProperty(effect.type)) {
             state.scores[effect.type] += effect.val;
@@ -636,14 +575,12 @@ function handleAnswer(effects) {
         state.currentQuestionIndex++;
         renderQuestion();
     } else {
-        // Clear event mode
         document.body.classList.remove('event-mode');
         showResult();
     }
 }
 
 function getResultType() {
-    // Find key with max score
     return Object.keys(state.scores).reduce((a, b) => state.scores[a] > state.scores[b] ? a : b);
 }
 
@@ -652,8 +589,8 @@ function showResult() {
     const resultData = TYPES[typeKey];
 
     resultUI.name.textContent = `${state.major} ${state.username}`;
-    resultUI.title.textContent = resultData.title;
-    resultUI.desc.innerText = resultData.desc; // Use innerText for newlines
+    resultUI.title.textContent = `[CLASS: ${resultData.title}]`;
+    resultUI.desc.innerText = resultData.desc;
 
     // Render List of Activities
     let activitiesHtml = "";
@@ -662,24 +599,22 @@ function showResult() {
             ${resultData.activities.map(act => `<li>${act}</li>`).join('')}
         </ul>`;
     } else {
-        activitiesHtml = resultData.activity; // Fallback
+        activitiesHtml = resultData.activity;
     }
 
     // Add Encouraging Message
     const msgElement = document.getElementById('encouraging-msg');
     if (msgElement) {
-        msgElement.innerHTML = `가장 중요한 건,<br>여러분이 진짜 하고 싶은 걸 선택하는 거예요! ✨`;
+        msgElement.innerHTML = `SYSTEM: 가장 중요한 건,<br>여러분이 진짜 하고 싶은 걸 선택하는 거예요! ✨`;
     }
 
     resultUI.activity.innerHTML = activitiesHtml;
 
-
-    // Icon mapping 
     const icons = {
-        MAKER: '🎨',
+        MAKER: '⚔️',
         EXPLORER: '🧭',
-        SAVER: '💰',
-        OBSERVER: '📸',
+        SAVER: '🛡️',
+        OBSERVER: '🔮',
         TRADER: '⚖️'
     };
     resultUI.badge.textContent = icons[typeKey];

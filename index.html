@@ -25,18 +25,36 @@
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Outfit:wght@400;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap"
         rel="stylesheet">
+    <!-- Game Font (DungGeunMo) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.css">
     <!-- Main Style -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- Libraries -->
-    <!-- Removed html2canvas -->
 </head>
 
 <body>
     <div class="app-container">
-        <!-- HEADER -->
-        <header class="app-header">
-            <h1>멋진실패 <span class="highlight">빛나는성공</span></h1>
-            <p class="subtitle">나의 천원 챌린지 유형 찾기</p>
+        <!-- GAME STATUS BAR -->
+        <div class="game-status-bar hidden" id="status-bar">
+            <div class="stat-item">
+                <span class="label">LVL</span>
+                <span class="value" id="lvl-val">01</span>
+            </div>
+            <div class="stat-item health">
+                <span class="label">HP</span>
+                <div class="hp-gauge">
+                    <div class="hp-fill" id="hp-fill"></div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="label">GOLD</span>
+                <span class="value">1,000₩</span>
+            </div>
+        </div>
+
+        <!-- HEADER (TITLE SCREEN) -->
+        <header class="app-header" id="main-header">
+            <h1 class="game-title">멋진실패 <span class="highlight">빛나는성공</span></h1>
+            <p class="subtitle">PRESS START TO DISCOVER YOUR TYPE</p>
         </header>
 
         <!-- INTRO PAGE -->
